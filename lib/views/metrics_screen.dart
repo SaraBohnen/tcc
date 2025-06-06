@@ -348,7 +348,7 @@ class _MetricsTabState extends State<MetricsTab> {
           break;
       }
       // Para fins didáticos, geramos um valor crescente linear
-      final baseValue = 1000.0;
+      final baseValue = 1200.0;
       final variation = (i * 20).toDouble();
       data.add(PerformanceData(pointDate, baseValue + variation));
     }
