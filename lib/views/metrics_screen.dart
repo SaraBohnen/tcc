@@ -15,8 +15,7 @@ import 'transactions_screen.dart';
 import 'wallet_screen.dart';
 import 'settings_screen.dart';
 
-/// Conteúdo da aba "Métricas" (sem Scaffold interno!)
-/// Coloca Painel "Total", Dropdown de filtro e gráfico.
+/// Conteúdo da aba "Métricas"
 class MetricsTab extends StatefulWidget {
   const MetricsTab({Key? key}) : super(key: key);
 
@@ -43,18 +42,10 @@ class _MetricsTabState extends State<MetricsTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ───────────────────────────────────────────────
-            // PAINEL "TOTAL" - Usando componente
-            // ───────────────────────────────────────────────
             TotalBalanceCard(
               totalBalance: SampleDataGenerator.generateTotalBalance(),
             ),
-
             const SizedBox(height: 24),
-
-            // ───────────────────────────────────────────────
-            // FILTRO DE PERÍODO - Usando componente
-            // ───────────────────────────────────────────────
             PeriodFilterDropdown(
               selectedFilter: _selectedFilter,
               onChanged: (newFilter) {
@@ -67,46 +58,29 @@ class _MetricsTabState extends State<MetricsTab> {
                 });
               },
             ),
-
             const SizedBox(height: 16),
-
-            // ───────────────────────────────────────────────
-            // GRÁFICO DE DESEMPENHO - Usando componentes
-            // ───────────────────────────────────────────────
             ChartContainer(
-              title: 'Desempenho da Carteira',
+              title: 'Portfolio Performance',
               chart: PerformanceLineChart(data: _chartData),
             ),
-
             const SizedBox(height: 24),
 
-            // ───────────────────────────────────────────────
-            // GRÁFICO DE TOKENS - Usando componentes
-            // ───────────────────────────────────────────────
+            // --- GRÁFICO 1: ATIVOS POR TOKEN ---
             ChartContainer(
-              title: 'Resumo de Tokens',
-              height: 300,
-              chart: CustomPieChart(
-                data: SampleDataGenerator.generateTokensData(),
-                radius: 80,
+              title: 'Assets by Token',
+              chart: AssetPieChart(
+                data: SampleDataGenerator.generatePreProcessedTokenData(),
               ),
             ),
-
             const SizedBox(height: 24),
 
-            // ───────────────────────────────────────────────
-            // GRÁFICO DE REDES - Usando componentes
-            // ───────────────────────────────────────────────
+            // --- GRÁFICO 2: ATIVOS POR REDE ---
             ChartContainer(
-              title: 'Resumo de Redes',
-              height: 300,
-              chart: CustomPieChart(
-                data: SampleDataGenerator.generateNetworksData(),
-                radius: 80,
+              title: 'Assets by Network',
+              chart: AssetPieChart(
+                data: SampleDataGenerator.generatePreProcessedNetworkData(),
               ),
             ),
-
-            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -115,9 +89,8 @@ class _MetricsTabState extends State<MetricsTab> {
 }
 
 /// Widget principal que contém AppBar, IndexedStack e BottomNavigationBar.
-/// Não há Scaffold aninhados — apenas este único Scaffold.
 class MetricsScreen extends StatelessWidget {
-  static const String routeName = '/'; // rota raiz
+  static const String routeName = '/';
 
   const MetricsScreen({Key? key}) : super(key: key);
 
@@ -127,16 +100,9 @@ class MetricsScreen extends StatelessWidget {
       create: (_) => NavigationController(),
       child: Consumer<NavigationController>(
         builder: (context, navController, _) {
-          // Lista de títulos dinâmicos para cada aba:
-          final titles = [
-            'Métricas',
-            'Transações',
-            'Carteira',
-            'Configurações',
-          ];
+          final titles = ['Metrics', 'Transactions', 'Wallet', 'Settings'];
           return Scaffold(
             backgroundColor: AppColors.backgroundLight,
-            // AppBar único, com título baseado na aba selecionada
             appBar: AppBar(
               backgroundColor: AppColors.primaryWhite,
               iconTheme: const IconThemeData(color: AppColors.textPrimary),
@@ -146,17 +112,15 @@ class MetricsScreen extends StatelessWidget {
               ),
               elevation: 0,
             ),
-            // O body é apenas o IndexedStack
             body: IndexedStack(
               index: navController.currentIndex,
               children: const [
-                MetricsTab(), // aba 0: conteúdo das Métricas
-                TransactionsScreen(), // aba 1: Transações
-                WalletScreen(), // aba 2: Carteira
-                SettingsScreen(), // aba 3: Configurações
+                MetricsTab(),
+                TransactionsScreen(),
+                WalletScreen(),
+                SettingsScreen(),
               ],
             ),
-            // BottomNavigationBar abaixo
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: navController.currentIndex,
               backgroundColor: AppColors.primaryWhite,
@@ -167,19 +131,19 @@ class MetricsScreen extends StatelessWidget {
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.show_chart),
-                  label: 'Métricas',
+                  label: 'Metrics',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.swap_horiz),
-                  label: 'Transações',
+                  label: 'Transactions',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.account_balance_wallet),
-                  label: 'Carteira',
+                  label: 'Wallet',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.settings),
-                  label: 'Configurações',
+                  label: 'Settings',
                 ),
               ],
             ),

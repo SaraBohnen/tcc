@@ -71,75 +71,29 @@ class SampleDataGenerator {
     return 0.00;
   }
 
-  /// Gera dados de exemplo para gráfico de tokens
-  static List<PieChartData> generateTokensData() {
-    final tokens = [
-      {'symbol': 'BTC', 'value': 45.2},
-      {'symbol': 'ETH', 'value': 25.8},
-      {'symbol': 'SOL', 'value': 12.3},
-      {'symbol': 'GRT', 'value': 6.1},
-      {'symbol': 'COW', 'value': 4.2},
-      {'symbol': 'TRX', 'value': 2.8},
-      {'symbol': 'XRP', 'value': 1.9},
-      {'symbol': 'LINK', 'value': 1.1},
-      {'symbol': 'UNI', 'value': 0.4},
-      {'symbol': 'TON', 'value': 0.2},
+  /// Gera dados de exemplo para os tokens, já processados.
+  static List<AssetData> generatePreProcessedTokenData() {
+    return [
+      AssetData(name: 'Bitcoin', value: 4500.0, color: Colors.orange),
+      AssetData(name: 'Ethereum', value: 3000.0, color: Colors.indigo),
+      AssetData(name: 'USDC', value: 2000.0, color: Colors.green),
+      AssetData(name: 'Solana', value: 1200.0, color: Colors.pinkAccent),
+      AssetData(name: 'Cardano', value: 800.0, color: Colors.blue),
+      AssetData(name: 'XRP', value: 500.0, color: Colors.teal),
+      AssetData(name: 'Others', value: 750.0, color: Colors.blueGrey),
     ];
-
-    final colors = [
-      AppColors.accentBlue,
-      Colors.orange,
-      Colors.purple,
-      Colors.green,
-      Colors.red,
-      Colors.teal,
-      Colors.indigo,
-      Colors.amber,
-      Colors.pink,
-      Colors.cyan,
-    ];
-
-    return tokens.asMap().entries.map((entry) {
-      final index = entry.key;
-      final token = entry.value;
-      return PieChartData(
-        label: token['symbol'] as String,
-        value: token['value'] as double,
-        percentage: token['value'] as double,
-        color: colors[index % colors.length],
-      );
-    }).toList();
   }
 
-  /// Gera dados de exemplo para gráfico de redes
-  static List<PieChartData> generateNetworksData() {
-    final networks = [
-      {'name': 'Ethereum', 'value': 35.4},
-      {'name': 'Base', 'value': 22.1},
-      {'name': 'Polygon', 'value': 18.7},
-      {'name': 'Avalanche', 'value': 12.9},
-      {'name': 'Arbitrum', 'value': 8.3},
-      {'name': 'BSC', 'value': 2.6},
+  /// Gera dados de exemplo para as redes, já processados.
+  static List<AssetData> generatePreProcessedNetworkData() {
+    return [
+      AssetData(name: 'Ethereum', value: 5500.0, color: Colors.indigo),
+      AssetData(name: 'Bitcoin', value: 4500.0, color: Colors.orange),
+      AssetData(name: 'BSC', value: 2500.0, color: Colors.amberAccent.shade700),
+      AssetData(name: 'Solana', value: 1200.0, color: Colors.pinkAccent),
+      AssetData(name: 'Polygon', value: 700.0, color: Colors.deepPurple),
+      AssetData(name: 'Avalanche', value: 600.0, color: Colors.red.shade700),
+      AssetData(name: 'Others', value: 750.0, color: Colors.blueGrey),
     ];
-
-    final colors = [
-      const Color(0xFF627EEA), // Ethereum blue
-      const Color(0xFF0052FF), // Base blue
-      const Color(0xFF8247E5), // Polygon purple
-      const Color(0xFFE84142), // Avalanche red
-      const Color(0xFF28A0F0), // Arbitrum blue
-      const Color(0xFFF3BA2F), // BSC yellow
-    ];
-
-    return networks.asMap().entries.map((entry) {
-      final index = entry.key;
-      final network = entry.value;
-      return PieChartData(
-        label: network['name'] as String,
-        value: network['value'] as double,
-        percentage: network['value'] as double,
-        color: colors[index % colors.length],
-      );
-    }).toList();
   }
 }
