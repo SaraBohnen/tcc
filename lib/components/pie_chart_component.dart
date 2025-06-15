@@ -1,18 +1,18 @@
+// lib/components/asset_pie_chart.dart
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-/// Data model for each slice of the pie chart.
-/// Using a class improves type safety and code readability.
+// O modelo de dados AssetData permanece o mesmo
 class AssetData {
   final String name;
-  final double value; // Represents the balance or total amount
+  final double value;
   final Color color;
 
   AssetData({required this.name, required this.value, required this.color});
 }
 
-/// A reusable and simplified pie chart widget that directly displays the data it receives.
-/// It expects the data to be pre-processed (e.g., top 6 assets + "Others").
 class AssetPieChart extends StatefulWidget {
   final List<AssetData> data;
 
@@ -25,19 +25,13 @@ class AssetPieChart extends StatefulWidget {
 class _AssetPieChartState extends State<AssetPieChart> {
   int touchedIndex = -1;
 
-  // The data processing logic has been removed. This widget is now much simpler.
-  // It will directly use `widget.data` for building the chart and legend.
-
   @override
   Widget build(BuildContext context) {
-    // The total value is needed to calculate the percentage for the title.
-    // We now use `widget.data` directly.
     final double totalValue = widget.data.fold(
       0.0,
       (sum, item) => sum + item.value,
     );
 
-    // Return an empty container if there is no data to display.
     if (widget.data.isEmpty) {
       return const Center(
         child: Text(
@@ -48,7 +42,7 @@ class _AssetPieChartState extends State<AssetPieChart> {
     }
 
     return AspectRatio(
-      aspectRatio: 1.6, // Adjusted for better layout with legend
+      aspectRatio: 1.6,
       child: Row(
         children: <Widget>[
           Expanded(
@@ -75,7 +69,9 @@ class _AssetPieChartState extends State<AssetPieChart> {
                   ),
                   borderData: FlBorderData(show: false),
                   sectionsSpace: 2,
-                  centerSpaceRadius: 40,
+                  // ✨ ALTERAÇÃO AQUI ✨
+                  // O valor foi alterado de 40 para 0 para preencher o gráfico.
+                  centerSpaceRadius: 0,
                   sections: _buildChartSections(totalValue),
                 ),
               ),
@@ -88,16 +84,15 @@ class _AssetPieChartState extends State<AssetPieChart> {
     );
   }
 
-  /// Builds the list of `PieChartSectionData` from `widget.data`.
   List<PieChartSectionData> _buildChartSections(double totalValue) {
     return List.generate(widget.data.length, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 16.0 : 12.0;
-      final radius = isTouched ? 60.0 : 50.0;
+      // Ajuste no raio para o gráfico de pizza cheio
+      final radius = isTouched ? 110.0 : 100.0;
       final shadows = [const Shadow(color: Colors.black, blurRadius: 2)];
 
       final asset = widget.data[i];
-      // Calculate percentage only if totalValue is not zero to avoid errors.
       final percentage =
           totalValue > 0 ? (asset.value / totalValue) * 100 : 0.0;
 
@@ -116,7 +111,6 @@ class _AssetPieChartState extends State<AssetPieChart> {
     });
   }
 
-  /// Builds the legend on the side of the chart from `widget.data`.
   Widget _buildLegend() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -132,7 +126,7 @@ class _AssetPieChartState extends State<AssetPieChart> {
   }
 }
 
-/// A simple legend indicator widget.
+// O widget Indicator permanece o mesmo
 class Indicator extends StatelessWidget {
   const Indicator({
     Key? key,

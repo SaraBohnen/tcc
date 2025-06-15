@@ -1,6 +1,7 @@
 // lib/utils/sample_data_generator.dart
 
 import 'dart:math';
+import 'package:app_chain_view/components/top_performers_table.dart';
 import 'package:flutter/material.dart';
 import '../components/performance_line_chart.dart';
 import '../components/period_filter_dropdown.dart';
@@ -94,6 +95,53 @@ class SampleDataGenerator {
       AssetData(name: 'Polygon', value: 700.0, color: Colors.deepPurple),
       AssetData(name: 'Avalanche', value: 600.0, color: Colors.red.shade700),
       AssetData(name: 'Others', value: 750.0, color: Colors.blueGrey),
+    ];
+  }
+
+  /// Gera dados de exemplo para a tabela de Top 5 Performers.
+  static List<TokenPerformanceData> generateTopPerformingTokens() {
+    return [
+      TokenPerformanceData(name: 'Solana', price: 172.5, sevenDayChange: 22.5),
+      TokenPerformanceData(
+        name: 'Avalanche',
+        price: 38.1,
+        sevenDayChange: 18.2,
+      ),
+      TokenPerformanceData(name: 'Toncoin', price: 7.85, sevenDayChange: 15.7),
+      // Adicionei um valor negativo para testar a cor vermelha
+      TokenPerformanceData(
+        name: 'Chainlink',
+        price: 18.92,
+        sevenDayChange: -12.1,
+      ),
+      TokenPerformanceData(
+        name: 'Bitcoin',
+        price: 69543.10,
+        sevenDayChange: 8.5,
+      ),
+    ];
+  }
+
+  /// Gera dados de exemplo para a tabela de Worst 5 Performers.
+  static List<TokenPerformanceData> generateWorstPerformingTokens() {
+    return [
+      TokenPerformanceData(
+        name: 'Chainlink',
+        price: 18.92,
+        sevenDayChange: -12.1,
+      ),
+      TokenPerformanceData(name: 'Starknet', price: 1.25, sevenDayChange: -9.8),
+      TokenPerformanceData(
+        name: 'Celestia',
+        price: 10.50,
+        sevenDayChange: -7.5,
+      ),
+      TokenPerformanceData(name: 'Uniswap', price: 10.11, sevenDayChange: -5.2),
+      TokenPerformanceData(
+        name: 'Ethereum',
+        price: 3680.40,
+        sevenDayChange: -2.3,
+      ),
     ];
   }
 }

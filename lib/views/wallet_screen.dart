@@ -11,13 +11,6 @@ class WalletScreen extends StatelessWidget {
     return Scaffold(
       // Fundo claro
       backgroundColor: AppColors.backgroundLight,
-      appBar: AppBar(
-        title: const Text(
-          'Carteira',
-          // style: AppStyles.screenTitle, // opcional
-        ),
-        elevation: 0,
-      ),
       body: const Center(
         child: Text(
           'Lista de tokens/criptomoedas aparecerá aqui',

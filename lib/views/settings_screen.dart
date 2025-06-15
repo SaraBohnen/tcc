@@ -11,13 +11,6 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       // Fundo claro
       backgroundColor: AppColors.backgroundLight,
-      appBar: AppBar(
-        title: const Text(
-          'Configurações',
-          // style: AppStyles.screenTitle, // opcional
-        ),
-        elevation: 0,
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'views/splash_screen.dart';
-import 'views/metrics_screen.dart'; // agora é a única tela principal
+import 'views/metrics_screen.dart';
 import 'utils/constants.dart';
 
 void main() {

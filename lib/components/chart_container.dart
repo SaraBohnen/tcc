@@ -14,7 +14,7 @@ class ChartContainer extends StatelessWidget {
     Key? key,
     required this.title,
     required this.chart,
-    this.height = 200,
+    this.height = 270,
     this.padding,
   }) : super(key: key);
 

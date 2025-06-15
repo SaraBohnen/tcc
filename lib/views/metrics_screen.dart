@@ -1,5 +1,6 @@
 // lib/views/metrics_screen.dart
 
+import 'package:app_chain_view/components/top_performers_table.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,14 +61,14 @@ class _MetricsTabState extends State<MetricsTab> {
             ),
             const SizedBox(height: 16),
             ChartContainer(
-              title: 'Portfolio Performance',
+              title: 'Desempenho da carteira',
               chart: PerformanceLineChart(data: _chartData),
             ),
             const SizedBox(height: 24),
 
             // --- GRÁFICO 1: ATIVOS POR TOKEN ---
             ChartContainer(
-              title: 'Assets by Token',
+              title: 'Resumo de tokens',
               chart: AssetPieChart(
                 data: SampleDataGenerator.generatePreProcessedTokenData(),
               ),
@@ -76,9 +77,27 @@ class _MetricsTabState extends State<MetricsTab> {
 
             // --- GRÁFICO 2: ATIVOS POR REDE ---
             ChartContainer(
-              title: 'Assets by Network',
+              title: 'Resumo de redes',
               chart: AssetPieChart(
                 data: SampleDataGenerator.generatePreProcessedNetworkData(),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // --- PAINEL: TOP 5 PERFORMERS ---
+            ChartContainer(
+              title: '5 tokens com melhor desempenho',
+              chart: TopPerformersTable(
+                data: SampleDataGenerator.generateTopPerformingTokens(),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // --- PAINEL: WORST 5 PERFORMERS ---
+            ChartContainer(
+              title: '5 tokens com pior desempenho',
+              chart: TopPerformersTable(
+                data: SampleDataGenerator.generateWorstPerformingTokens(),
               ),
             ),
           ],
@@ -100,7 +119,12 @@ class MetricsScreen extends StatelessWidget {
       create: (_) => NavigationController(),
       child: Consumer<NavigationController>(
         builder: (context, navController, _) {
-          final titles = ['Metrics', 'Transactions', 'Wallet', 'Settings'];
+          final titles = [
+            'Métricas',
+            'Transações',
+            'Carteira',
+            'Configurações',
+          ];
           return Scaffold(
             backgroundColor: AppColors.backgroundLight,
             appBar: AppBar(
@@ -131,19 +155,19 @@ class MetricsScreen extends StatelessWidget {
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.show_chart),
-                  label: 'Metrics',
+                  label: 'Métricas',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.swap_horiz),
-                  label: 'Transactions',
+                  label: 'Transações',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.account_balance_wallet),
-                  label: 'Wallet',
+                  label: 'Carteira',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.settings),
-                  label: 'Settings',
+                  label: 'Configurações',
                 ),
               ],
             ),

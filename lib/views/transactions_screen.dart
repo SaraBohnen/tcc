@@ -11,14 +11,6 @@ class TransactionsScreen extends StatelessWidget {
     return Scaffold(
       // Fundo claro
       backgroundColor: AppColors.backgroundLight,
-      appBar: AppBar(
-        // Herdará AppBar branca + título escuro pelo theme global
-        title: const Text(
-          'Transações',
-          // style: AppStyles.screenTitle, // opcional
-        ),
-        elevation: 0,
-      ),
       body: const Center(
         child: Text(
           'Histórico de transações aparecerá aqui',
