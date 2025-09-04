@@ -1,10 +1,8 @@
-// lib/controllers/navigation_controller.dart
-
 import 'package:flutter/material.dart';
 
-/// NavigationController gerencia o índice da aba selecionada
-/// e notifica listeners quando há mudança.
-class NavigationController extends ChangeNotifier {
+class AppViewmodel extends ChangeNotifier {
+  /// gerencia o índice da aba selecionada
+  /// e notifica listeners quando há mudança.
   int _currentIndex = 0;
 
   int get currentIndex => _currentIndex;

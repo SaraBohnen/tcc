@@ -8,6 +8,7 @@ plugins {
 android {
     namespace = "com.example.app_chain_view"
     compileSdk = flutter.compileSdkVersion
+
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

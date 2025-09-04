@@ -1,10 +1,9 @@
 // lib/views/metrics_screen.dart
 
 import 'package:app_chain_view/components/top_performers_table.dart';
+import 'package:app_chain_view/views/viewmodels/app_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../controllers/navigation_controller.dart';
 import '../utils/constants.dart';
 import '../utils/sample_data_generator.dart';
 import '../components/total_balance_card.dart';
@@ -115,9 +114,9 @@ class MetricsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NavigationController>(
-      create: (_) => NavigationController(),
-      child: Consumer<NavigationController>(
+    return ChangeNotifierProvider<AppViewmodel>(
+      create: (_) => AppViewmodel(),
+      child: Consumer<AppViewmodel>(
         builder: (context, navController, _) {
           final titles = [
             'Métricas',

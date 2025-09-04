@@ -1,6 +1,7 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
+
+import 'package:app_chain_view/views/onboarding/onboarding_screen.dart';
+import 'package:app_chain_view/views/start/start_gate.dart';
 import 'views/splash_screen.dart';
 import 'views/metrics_screen.dart';
 import 'utils/constants.dart';
@@ -17,16 +18,21 @@ class AppChainView extends StatelessWidget {
     return MaterialApp(
       title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
+
+      // TEMA
       theme: ThemeData(
+        useMaterial3: true,
         brightness: Brightness.light,
         primaryColor: AppColors.primaryWhite,
         scaffoldBackgroundColor: AppColors.backgroundLight,
+
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.primaryWhite,
           elevation: 0,
           titleTextStyle: AppStyles.screenTitle,
           iconTheme: IconThemeData(color: AppColors.textPrimary),
         ),
+
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: AppColors.primaryWhite,
           selectedItemColor: AppColors.navSelected,
@@ -34,16 +40,19 @@ class AppChainView extends StatelessWidget {
           elevation: 8,
           type: BottomNavigationBarType.fixed,
         ),
+
         textTheme: const TextTheme(
           bodyLarge: AppStyles.bodyText,
           bodyMedium: AppStyles.bodyText,
           bodySmall: AppStyles.bodyText,
         ),
+
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: AppColors.accentBlue,
           foregroundColor: AppColors.primaryWhite,
         ),
-        cardTheme: const CardTheme(
+
+        cardTheme: const CardThemeData(
           color: AppColors.surfaceLight,
           elevation: 4,
           shape: RoundedRectangleBorder(
@@ -51,9 +60,13 @@ class AppChainView extends StatelessWidget {
           ),
         ),
       ),
+
+      // ROTAS
       initialRoute: SplashScreen.routeName,
       routes: {
         SplashScreen.routeName: (_) => const SplashScreen(),
+        StartGate.routeName: (_) => const StartGate(),
+        OnboardingScreen.routeName: (_) => const OnboardingScreen(),
         MetricsScreen.routeName: (_) => const MetricsScreen(),
       },
     );

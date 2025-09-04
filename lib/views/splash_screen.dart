@@ -1,6 +1,7 @@
 // lib/views/splash_screen.dart
 
 import 'dart:async';
+import 'package:app_chain_view/views/start/start_gate.dart';
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import 'metrics_screen.dart';
@@ -32,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Timer(const Duration(milliseconds: 3000), () {
       // Substitua a rota para MetricsScreen:
-      Navigator.of(context).pushReplacementNamed(MetricsScreen.routeName);
+      Navigator.pushReplacementNamed(context, StartGate.routeName);
     });
   }
 
