@@ -1,24 +1,43 @@
-import 'package:app_chain_view/views/viewmodels/onboarding_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../services/prefs_service.dart';
+
+import 'package:app_chain_view/views/viewmodels/onboarding_viewmodel.dart';
+import 'package:app_chain_view/services/prefs_service.dart';
+import 'package:app_chain_view/views/start/start_gate.dart';
 import 'onboarding_page.dart';
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
   static const routeName = '/onboarding';
 
   @override
-  Widget build(BuildContext context) {
-    final controller = PageController();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
 
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  late final PageController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => OnboardingViewModel(),
       child: Consumer<OnboardingViewModel>(
         builder: (context, vm, _) {
           return Scaffold(
             body: PageView(
-              controller: controller,
+              controller: _controller,
               onPageChanged: vm.setPage,
               children: [
                 OnboardingPage(
@@ -27,33 +46,35 @@ class OnboardingScreen extends StatelessWidget {
                   description:
                       "Acompanhe todas as suas criptomoedas em um só lugar, com clareza e praticidade.",
                   buttonText: "Próximo",
-                  onNext:
-                      () => controller.nextPage(
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeInOut,
-                      ),
+                  onNext: () => _controller.nextPage(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                  ),
                 ),
                 OnboardingPage(
-                  imageAsset: "assets/images/onboarding1.png",
+                  imageAsset: "assets/images/onboarding2.png",
                   title: "Navegue entre carteiras",
                   description:
                       "Adicione diferentes carteiras para gerenciar seu portfólio do seu jeito.",
                   buttonText: "Próximo",
-                  onNext:
-                      () => controller.nextPage(
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeInOut,
-                      ),
+                  onNext: () => _controller.nextPage(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                  ),
                 ),
                 OnboardingPage(
-                  imageAsset: "assets/images/onboarding1.png",
+                  imageAsset: "assets/images/onboarding3.png",
                   title: "Métricas e análises inteligentes",
                   description:
                       "Acompanhe gráficos atualizados e visualize o desempenho da sua carteira de forma simples e intuitiva.",
                   buttonText: "Vamos lá!",
                   onNext: () async {
                     await PrefsService().setOnboardingDone();
-                    Navigator.pushReplacementNamed(context, "/login");
+                    if (!mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      StartGate.routeName, // ou SplashScreen.routeName
+                      (_) => false,
+                    );
                   },
                 ),
               ],

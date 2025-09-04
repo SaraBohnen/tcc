@@ -6,7 +6,7 @@ class User {
   final String email;
   final String senha;
   final List<Wallet> listaCarteiras;
-  final String prefMoeda; // ex.: "BRL", "USD"
+  final String prefMoeda;
 
   const User({
     required this.id,

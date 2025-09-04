@@ -1,10 +1,6 @@
 // lib/views/splash_screen.dart
-
-import 'dart:async';
-import 'package:app_chain_view/views/start/start_gate.dart';
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
-import 'metrics_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String routeName = '/splash';
@@ -16,30 +12,23 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
+  late final AnimationController _ac;
+  late final Animation<double> _fade;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    _ac = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
-    );
-    _animationController.forward();
-
-    Timer(const Duration(milliseconds: 3000), () {
-      // Substitua a rota para MetricsScreen:
-      Navigator.pushReplacementNamed(context, StartGate.routeName);
-    });
+    _fade = CurvedAnimation(parent: _ac, curve: Curves.easeIn);
+    _ac.forward();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _ac.dispose();
     super.dispose();
   }
 
@@ -49,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: AppColors.primaryWhite,
       body: Center(
         child: FadeTransition(
-          opacity: _fadeAnimation,
+          opacity: _fade,
           child: Text(
             AppStrings.splashSlogan,
             style: AppStyles.splashTextStyle,

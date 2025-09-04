@@ -108,7 +108,7 @@ class _MetricsTabState extends State<MetricsTab> {
 
 /// Widget principal que contém AppBar, IndexedStack e BottomNavigationBar.
 class MetricsScreen extends StatelessWidget {
-  static const String routeName = '/';
+  static const routeName = '/metrics';
 
   const MetricsScreen({Key? key}) : super(key: key);
 

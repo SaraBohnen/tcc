@@ -25,14 +25,12 @@ class AppChainView extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: AppColors.primaryWhite,
         scaffoldBackgroundColor: AppColors.backgroundLight,
-
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.primaryWhite,
           elevation: 0,
           titleTextStyle: AppStyles.screenTitle,
           iconTheme: IconThemeData(color: AppColors.textPrimary),
         ),
-
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: AppColors.primaryWhite,
           selectedItemColor: AppColors.navSelected,
@@ -40,18 +38,15 @@ class AppChainView extends StatelessWidget {
           elevation: 8,
           type: BottomNavigationBarType.fixed,
         ),
-
         textTheme: const TextTheme(
           bodyLarge: AppStyles.bodyText,
           bodyMedium: AppStyles.bodyText,
           bodySmall: AppStyles.bodyText,
         ),
-
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: AppColors.accentBlue,
           foregroundColor: AppColors.primaryWhite,
         ),
-
         cardTheme: const CardThemeData(
           color: AppColors.surfaceLight,
           elevation: 4,
@@ -61,11 +56,11 @@ class AppChainView extends StatelessWidget {
         ),
       ),
 
-      // ROTAS
-      initialRoute: SplashScreen.routeName,
+      // >>> AQUI: StartGate decide o fluxo
+      initialRoute: StartGate.routeName, // '/'
       routes: {
-        SplashScreen.routeName: (_) => const SplashScreen(),
         StartGate.routeName: (_) => const StartGate(),
+        SplashScreen.routeName: (_) => const SplashScreen(),
         OnboardingScreen.routeName: (_) => const OnboardingScreen(),
         MetricsScreen.routeName: (_) => const MetricsScreen(),
       },
