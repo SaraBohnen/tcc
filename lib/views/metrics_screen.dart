@@ -99,6 +99,21 @@ class _MetricsTabState extends State<MetricsTab> {
                 data: SampleDataGenerator.generateWorstPerformingTokens(),
               ),
             ),
+            const SizedBox(height: 24),
+
+            //--- FRASE E ÍCONE ---
+            Column(
+              children: const [
+                Icon(Icons.bar_chart, size: 58, color: Colors.grey),
+                Text(
+                  'GERENCIAR GRÁFICOS',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            //--- IMAGEM FINAL ---
+            Image.asset('assets/images/metrics.png', fit: BoxFit.contain),
           ],
         ),
       ),
@@ -133,6 +148,7 @@ class MetricsScreen extends StatelessWidget {
                 titles[navController.currentIndex],
                 style: AppStyles.screenTitle,
               ),
+              centerTitle: true,
               elevation: 0,
             ),
             body: IndexedStack(

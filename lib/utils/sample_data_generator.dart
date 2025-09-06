@@ -2,11 +2,12 @@
 
 import 'dart:math';
 import 'package:app_chain_view/components/top_performers_table.dart';
+import 'package:app_chain_view/models/token.dart';
+import 'package:app_chain_view/models/transaction.dart';
 import 'package:flutter/material.dart';
 import '../components/performance_line_chart.dart';
 import '../components/period_filter_dropdown.dart';
 import '../components/pie_chart_component.dart';
-import '../utils/constants.dart';
 
 /// Classe utilitária para gerar dados de exemplo
 /// Quando o backend estiver pronto, substitua por chamadas reais
@@ -143,5 +144,119 @@ class SampleDataGenerator {
         sevenDayChange: -2.3,
       ),
     ];
+  }
+
+  /// Gera histórico fake de transações para uma carteira
+  static List<Transaction> generateTransactionHistory(PeriodFilter filter) {
+    final now = DateTime.now();
+    late DateTime startDate;
+
+    switch (filter) {
+      case PeriodFilter.last7Days:
+        startDate = now.subtract(const Duration(days: 6));
+        break;
+      case PeriodFilter.last1Month:
+        startDate = DateTime(now.year, now.month - 1, now.day);
+        break;
+      case PeriodFilter.last3Months:
+        startDate = DateTime(now.year, now.month - 3, now.day);
+        break;
+      case PeriodFilter.last1Year:
+        startDate = DateTime(now.year - 1, now.month, now.day);
+        break;
+    }
+
+    final random = Random();
+    final redes = ['Ethereum', 'Bitcoin', 'BSC', 'Polygon'];
+
+    // Tokens fake
+    final tokens = [
+      Token(
+        contrato: "0xbtc",
+        nome: "Bitcoin",
+        iconeUrl: null,
+        preco: 69000,
+        mudancaPreco1D: 1.2,
+        mudancaPreco7D: 5.8,
+        mudancaPreco1M: 10.3,
+        mudancaPreco1A: 120.0,
+        mudancaPrecoTotal: 35000,
+        blockchain: "Bitcoin",
+        qtdToken: 0.5,
+      ),
+      Token(
+        contrato: "0xeth",
+        nome: "Ethereum",
+        iconeUrl: null,
+        preco: 3500,
+        mudancaPreco1D: -0.4,
+        mudancaPreco7D: 2.2,
+        mudancaPreco1M: 8.7,
+        mudancaPreco1A: 80.0,
+        mudancaPrecoTotal: 2000,
+        blockchain: "Ethereum",
+        qtdToken: 10,
+      ),
+      Token(
+        contrato: "0xusdc",
+        nome: "USDC",
+        iconeUrl: null,
+        preco: 1,
+        mudancaPreco1D: 0,
+        mudancaPreco7D: 0,
+        mudancaPreco1M: 0,
+        mudancaPreco1A: 0,
+        mudancaPrecoTotal: 1,
+        blockchain: "Ethereum",
+        qtdToken: 5000,
+      ),
+      Token(
+        contrato: "0xsol",
+        nome: "Solana",
+        iconeUrl: null,
+        preco: 180,
+        mudancaPreco1D: 3.2,
+        mudancaPreco7D: 12.5,
+        mudancaPreco1M: 20.1,
+        mudancaPreco1A: 300.0,
+        mudancaPrecoTotal: 90,
+        blockchain: "Solana",
+        qtdToken: 50,
+      ),
+    ];
+
+    final List<Transaction> transactions = [];
+
+    for (int i = 0; i < 20; i++) {
+      final date = startDate.add(
+        Duration(
+          days: random.nextInt(now.difference(startDate).inDays + 1),
+          hours: random.nextInt(24),
+          minutes: random.nextInt(60),
+        ),
+      );
+
+      final token = tokens[random.nextInt(tokens.length)];
+
+      transactions.add(
+        Transaction(
+          id: i + 1,
+          tipo: random.nextInt(3), // 0=entrada, 1=saída, 2=transferência
+          rede: redes[random.nextInt(redes.length)],
+          hashTransacao: "0x${random.nextInt(999999999).toRadixString(16)}",
+          fee: double.parse((random.nextDouble() * 0.01).toStringAsFixed(6)),
+          deOnde: "Carteira${random.nextInt(100)}",
+          paraOnde: "Carteira${random.nextInt(100)}",
+          token: token,
+          dataHora: date,
+          qtdToken: double.parse((random.nextDouble() * 5).toStringAsFixed(4)),
+        ),
+      );
+    }
+
+    // Ordenar por data decrescente (mais recente primeiro)
+    transactions.sort((a, b) => b.dataHora.compareTo(a.dataHora));
+
+    return transactions;
   }
 }

@@ -10,7 +10,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // Fundo claro
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.primaryWhite,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -63,6 +63,20 @@ class SettingsScreen extends StatelessWidget {
               ],
               onChanged: (String? newLang) {
                 // TODO: implementar troca de idioma
+              },
+            ),
+            const SizedBox(height: 24),
+            const Text('Moeda Principal', style: AppStyles.screenTitle),
+            const SizedBox(height: 8),
+            DropdownButton<String>(
+              dropdownColor: AppColors.primaryWhite,
+              value: 'USD',
+              items: const [
+                DropdownMenuItem(value: 'USD', child: Text('Dolar')),
+                DropdownMenuItem(value: 'BRL', child: Text('Real')),
+              ],
+              onChanged: (String? newLang) {
+                // TODO: implementar troca de moeda
               },
             ),
           ],
