@@ -1,87 +1,102 @@
+// lib/views/viewmodels/metrics_viewmodel.dart
 import 'package:flutter/foundation.dart';
-import '../../utils/sample_data_generator.dart';
-import '../../components/performance_line_chart.dart';
-import '../../components/period_filter_dropdown.dart';
-import '../../components/pie_chart_component.dart';
-import '../../components/top_performers_table.dart';
+import 'package:app_chain_view/data/repositories/metrics_repository.dart';
+import 'package:app_chain_view/models/metrics.dart';
+import 'package:app_chain_view/models/metrics/performance_point.dart';
+import 'package:app_chain_view/models/metrics/token_performance.dart';
+import 'package:app_chain_view/models/metrics/asset_slice.dart';
+import 'package:app_chain_view/components/performance_line_chart.dart';
+import 'package:app_chain_view/components/period_filter_dropdown.dart';
+import 'package:app_chain_view/components/top_performers_table.dart'; // para TokenPerformanceData
 
-/// ViewModel para a tela de Métricas
 class MetricsViewModel extends ChangeNotifier {
-  // --- ESTADOS ---
-  double _totalBalance = 0.0;
-  double get totalBalance => _totalBalance;
+  final MetricsRepository _repo;
+  MetricsViewModel(this._repo);
 
-  double _totalFees = 0.0;
-  double get totalFees => _totalFees;
+  Metrics? _snapshot;
+
+  double get totalBalance => _snapshot?.totalBalance ?? 0.0;
+  double get totalFees => _snapshot?.totalFees ?? 0.0;
+  DateTime? get updatedAt => _snapshot?.updatedAt;
+
+  bool _isRefreshing = false;
+  bool get isRefreshing => _isRefreshing;
 
   PeriodFilter _selectedFilter = PeriodFilter.last7Days;
   PeriodFilter get selectedFilter => _selectedFilter;
 
-  List<PerformanceData> _performanceData = [];
-  List<PerformanceData> get performanceData => _performanceData;
+  // Série filtrada para o gráfico de linha
+  List<PerformanceData> get performanceData {
+    final series = _snapshot?.portfolioPerformance ?? const <PerformancePoint>[];
+    if (series.isEmpty) return const [];
+    final now = DateTime.now();
+    DateTime cutoff;
+    switch (_selectedFilter) {
+      case PeriodFilter.last7Days:
+        cutoff = now.subtract(const Duration(days: 6)); break;
+      case PeriodFilter.last1Month:
+        cutoff = now.subtract(const Duration(days: 30)); break;
+      case PeriodFilter.last3Months:
+        cutoff = now.subtract(const Duration(days: 90)); break;
+      case PeriodFilter.last1Year:
+        cutoff = now.subtract(const Duration(days: 365)); break;
+    }
+    final filtered = series.where((p) => !p.date.isBefore(cutoff)).toList();
+    return filtered.map((p) => PerformanceData(p.date, p.value)).toList();
+  }
 
-  List<AssetData> _tokenData = [];
-  List<AssetData> get tokenData => _tokenData;
+  // Dados para os gráficos de pizza
+  List<AssetSlice> get tokenData => _snapshot?.tokenSummary ?? const <AssetSlice>[];
+  List<AssetSlice> get networkData => _snapshot?.networkSummary ?? const <AssetSlice>[];
 
-  List<AssetData> _networkData = [];
-  List<AssetData> get networkData => _networkData;
+  // Adaptadores para a tabela Top/Worst (converte para TokenPerformanceData do componente)
+  List<TokenPerformanceData> get topPerformers {
+    final list = _snapshot?.topPerformers ?? const <TokenPerformance>[];
+    return list
+        .map((e) => TokenPerformanceData(
+      name: e.name,
+      price: e.price,
+      sevenDayChange: e.sevenDayChange,
+    ))
+        .toList();
+  }
 
-  List<TokenPerformanceData> _topPerformers = [];
-  List<TokenPerformanceData> get topPerformers => _topPerformers;
+  List<TokenPerformanceData> get worstPerformers {
+    final list = _snapshot?.worstPerformers ?? const <TokenPerformance>[];
+    return list
+        .map((e) => TokenPerformanceData(
+      name: e.name,
+      price: e.price,
+      sevenDayChange: e.sevenDayChange,
+    ))
+        .toList();
+  }
 
-  List<TokenPerformanceData> _worstPerformers = [];
-  List<TokenPerformanceData> get worstPerformers => _worstPerformers;
-
-  // --- MÉTODOS DE CARGA ---
-  //esse metódo carrega os dados toda vez que abrir a tela
+  // Ciclo de vida
   Future<void> loadAll() async {
-    loadTotalBalance();
-    loadTotalFees();
-    loadPerformanceData();
-    loadTokenData();
-    loadNetworkData();
-    loadTopPerformers();
-    loadWorstPerformers();
+    final local = await _repo.getLocalSnapshot();
+    if (local != null) {
+      _snapshot = local;
+      notifyListeners();
+    }
+    await refresh();
   }
 
-  void loadTotalBalance() {
-    _totalBalance = SampleDataGenerator.generateTotalBalance();
+  Future<void> refresh() async {
+    if (_isRefreshing) return;
+    _isRefreshing = true;
     notifyListeners();
+    try {
+      final fresh = await _repo.refreshFromRemote();
+      _snapshot = fresh;
+    } finally {
+      _isRefreshing = false;
+      notifyListeners();
+    }
   }
 
-  void loadTotalFees() {
-    _totalFees = SampleDataGenerator.generateTotalFees();
-    notifyListeners();
-  }
-
-  void loadPerformanceData() {
-    _performanceData = SampleDataGenerator.generatePerformanceData(_selectedFilter);
-    notifyListeners();
-  }
-
-  void loadTokenData() {
-    _tokenData = SampleDataGenerator.generatePreProcessedTokenData();
-    notifyListeners();
-  }
-
-  void loadNetworkData() {
-    _networkData = SampleDataGenerator.generatePreProcessedNetworkData();
-    notifyListeners();
-  }
-
-  void loadTopPerformers() {
-    _topPerformers = SampleDataGenerator.generateTopPerformingTokens();
-    notifyListeners();
-  }
-
-  void loadWorstPerformers() {
-    _worstPerformers = SampleDataGenerator.generateWorstPerformingTokens();
-    notifyListeners();
-  }
-
-  // --- AÇÃO DO FILTRO ---
   void updateFilter(PeriodFilter filter) {
     _selectedFilter = filter;
-    loadPerformanceData();
+    notifyListeners();
   }
 }

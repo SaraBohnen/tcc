@@ -2,19 +2,10 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
-// O modelo de dados AssetData permanece o mesmo
-class AssetData {
-  final String name;
-  final double value;
-  final Color color;
-
-  AssetData({required this.name, required this.value, required this.color});
-}
+import 'package:app_chain_view/models/metrics/asset_slice.dart';
 
 class AssetPieChart extends StatefulWidget {
-  final List<AssetData> data;
+  final List<AssetSlice> data;
 
   const AssetPieChart({Key? key, required this.data}) : super(key: key);
 
@@ -27,10 +18,8 @@ class _AssetPieChartState extends State<AssetPieChart> {
 
   @override
   Widget build(BuildContext context) {
-    final double totalValue = widget.data.fold(
-      0.0,
-      (sum, item) => sum + item.value,
-    );
+    final double totalValue =
+    widget.data.fold(0.0, (sum, item) => sum + item.value);
 
     if (widget.data.isEmpty) {
       return const Center(
@@ -52,7 +41,7 @@ class _AssetPieChartState extends State<AssetPieChart> {
               child: PieChart(
                 PieChartData(
                   pieTouchData: PieTouchData(
-                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                    touchCallback: (event, pieTouchResponse) {
                       setState(() {
                         if (!event.isInterestedForInteractions ||
                             pieTouchResponse == null ||
@@ -60,17 +49,13 @@ class _AssetPieChartState extends State<AssetPieChart> {
                           touchedIndex = -1;
                           return;
                         }
-                        touchedIndex =
-                            pieTouchResponse
-                                .touchedSection!
-                                .touchedSectionIndex;
+                        touchedIndex = pieTouchResponse
+                            .touchedSection!.touchedSectionIndex;
                       });
                     },
                   ),
                   borderData: FlBorderData(show: false),
                   sectionsSpace: 2,
-                  // ✨ ALTERAÇÃO AQUI ✨
-                  // O valor foi alterado de 40 para 0 para preencher o gráfico.
                   centerSpaceRadius: 0,
                   sections: _buildChartSections(totalValue),
                 ),
@@ -88,13 +73,12 @@ class _AssetPieChartState extends State<AssetPieChart> {
     return List.generate(widget.data.length, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 16.0 : 12.0;
-      // Ajuste no raio para o gráfico de pizza cheio
       final radius = isTouched ? 110.0 : 100.0;
       final shadows = [const Shadow(color: Colors.black, blurRadius: 2)];
 
       final asset = widget.data[i];
       final percentage =
-          totalValue > 0 ? (asset.value / totalValue) * 100 : 0.0;
+      totalValue > 0 ? (asset.value / totalValue) * 100 : 0.0;
 
       return PieChartSectionData(
         color: asset.color,
@@ -115,18 +99,16 @@ class _AssetPieChartState extends State<AssetPieChart> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children:
-          widget.data.map((data) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Indicator(color: data.color, text: data.name),
-            );
-          }).toList(),
+      children: widget.data
+          .map((e) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Indicator(color: e.color, text: e.name),
+      ))
+          .toList(),
     );
   }
 }
 
-// O widget Indicator permanece o mesmo
 class Indicator extends StatelessWidget {
   const Indicator({
     Key? key,
