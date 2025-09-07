@@ -11,7 +11,7 @@ class TotalBalanceCard extends StatelessWidget {
   const TotalBalanceCard({
     Key? key,
     required this.totalBalance,
-    this.title = 'Total',
+    required this.title,
   }) : super(key: key);
 
   @override

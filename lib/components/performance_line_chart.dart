@@ -12,8 +12,7 @@ class PerformanceData {
   PerformanceData(this.date, this.value);
 }
 
-/// Widget que exibe o gráfico de linha usando FL Chart,
-/// recebendo uma lista de [PerformanceData].
+/// Gráfico de linha usando FL Chart
 class PerformanceLineChart extends StatelessWidget {
   final List<PerformanceData> data;
   final String title;
@@ -26,8 +25,8 @@ class PerformanceLineChart extends StatelessWidget {
     this.title = 'Desempenho da Carteira',
     this.lineColor = AppColors.accentBlue,
     Color? areaColor,
-  }) : areaColor = areaColor ?? AppColors.accentBlue,
-       super(key: key);
+  })  : areaColor = areaColor ?? AppColors.accentBlue,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,18 +34,25 @@ class PerformanceLineChart extends StatelessWidget {
       return const Center(child: Text('Sem dados para exibir'));
     }
 
-    // Base para converter datas em dias desde o início
-    final baseDate = data.first.date;
-    final spots =
-        data.map((pd) {
-          final x = pd.date.difference(baseDate).inDays.toDouble();
-          return FlSpot(x, pd.value);
-        }).toList();
+    // Use índice como eixo X para evitar "escapar" do gráfico
+    final spots = List.generate(
+      data.length,
+          (i) => FlSpot(i.toDouble(), data[i].value),
+    );
 
-    // Encontrar minY e maxY
+    // Y bounds + padding
     final values = data.map((e) => e.value).toList();
-    final minY = values.reduce((a, b) => a < b ? a : b);
-    final maxY = values.reduce((a, b) => a > b ? a : b);
+    double minY = values.reduce((a, b) => a < b ? a : b);
+    double maxY = values.reduce((a, b) => a > b ? a : b);
+    final range = maxY - minY;
+    if (range == 0) {
+      minY -= 1;
+      maxY += 1;
+    } else {
+      final pad = range * 0.1;
+      minY -= pad;
+      maxY += pad;
+    }
 
     return LineChart(
       LineChartData(
@@ -56,32 +62,15 @@ class PerformanceLineChart extends StatelessWidget {
         maxY: maxY,
         gridData: FlGridData(show: true, drawVerticalLine: false),
         titlesData: FlTitlesData(
+          // NÃO exibir datas no eixo X
           bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: 1,
-              getTitlesWidget: (value, meta) {
-                final index = value.toInt();
-                if (index < 0 || index >= data.length) return const SizedBox();
-                final date = data[index].date;
-                final label = DateFormat('dd/MM').format(date);
-                return Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    label,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 10,
-                    ),
-                  ),
-                );
-              },
-            ),
+            sideTitles: SideTitles(showTitles: false),
           ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40,
+              interval: ((maxY - minY) / 4).clamp(0.0001, double.infinity),
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toInt().toString(),
@@ -91,7 +80,6 @@ class PerformanceLineChart extends StatelessWidget {
                   ),
                 );
               },
-              interval: (maxY - minY) / 4,
             ),
           ),
           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -124,8 +112,9 @@ class PerformanceLineChart extends StatelessWidget {
           touchTooltipData: LineTouchTooltipData(
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
-                final date = data[spot.spotIndex].date;
-                final val = data[spot.spotIndex].value;
+                final idx = spot.spotIndex;
+                final date = data[idx].date;
+                final val = data[idx].value;
                 final formattedDate = DateFormat('dd/MM/yyyy').format(date);
                 return LineTooltipItem(
                   '$formattedDate\nR\$ ${val.toStringAsFixed(2)}',

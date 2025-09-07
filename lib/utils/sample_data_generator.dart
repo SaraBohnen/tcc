@@ -12,65 +12,73 @@ import '../components/pie_chart_component.dart';
 /// Classe utilitária para gerar dados de exemplo
 /// Quando o backend estiver pronto, substitua por chamadas reais
 class SampleDataGenerator {
-  /// Gera dados de exemplo conforme o filtro selecionado
-  static List<PerformanceData> generatePerformanceData(PeriodFilter filter) {
-    final now = DateTime.now();
-    late DateTime startDate;
-    late int pointCount;
-
-    switch (filter) {
-      case PeriodFilter.last7Days:
-        startDate = now.subtract(const Duration(days: 6));
-        pointCount = 7;
-        break;
-      case PeriodFilter.last1Month:
-        startDate = DateTime(now.year, now.month - 1, now.day);
-        pointCount = 30;
-        break;
-      case PeriodFilter.last3Months:
-        startDate = DateTime(now.year, now.month - 3, now.day);
-        pointCount = 45;
-        break;
-      case PeriodFilter.last1Year:
-        startDate = DateTime(now.year - 1, now.month, now.day);
-        pointCount = 52;
-        break;
-    }
-
-    final List<PerformanceData> data = [];
-    for (int i = 0; i < pointCount; i++) {
-      late DateTime pointDate;
-      switch (filter) {
-        case PeriodFilter.last7Days:
-          pointDate = startDate.add(Duration(days: i));
-          break;
-        case PeriodFilter.last1Month:
-          pointDate = startDate.add(Duration(days: i));
-          break;
-        case PeriodFilter.last3Months:
-          final totalDays = now.difference(startDate).inDays;
-          final step = totalDays / (pointCount - 1);
-          pointDate = startDate.add(Duration(days: (step * i).round()));
-          break;
-        case PeriodFilter.last1Year:
-          final totalDays = now.difference(startDate).inDays;
-          final step = totalDays / (pointCount - 1);
-          pointDate = startDate.add(Duration(days: (step * i).round()));
-          break;
-      }
-      // Para fins didáticos, geramos um valor crescente linear
-      final baseValue = 1200.0;
-      final variation = (i * 20).toDouble();
-      data.add(PerformanceData(pointDate, baseValue + variation));
-    }
-
-    return data;
-  }
 
   /// Gera um valor de saldo total de exemplo
   static double generateTotalBalance() {
     // Valor placeholder - substitua por dados reais
-    return 0.00;
+    return 15.20;
+  }
+
+  //Gera um valor de total de taxas gastas
+  static double generateTotalFees(){
+    return 0.235;
+}
+
+  /// Gera dados de exemplo conforme o filtro selecionado
+  static List<PerformanceData> generatePerformanceData(PeriodFilter filter) {
+    final now = DateTime.now();
+
+    DateTime monthStart(DateTime d) => DateTime(d.year, d.month, 1);
+
+    final List<PerformanceData> data = [];
+
+    switch (filter) {
+      case PeriodFilter.last7Days: {
+        final startDate = now.subtract(const Duration(days: 6));
+        for (int i = 0; i < 7; i++) {
+          final pointDate = startDate.add(Duration(days: i));
+          final value = 1200.0 + (i * 20);
+          data.add(PerformanceData(pointDate, value));
+        }
+        break;
+      }
+
+      case PeriodFilter.last1Month: {
+        // 30 pontos diários
+        final startDate = now.subtract(const Duration(days: 29));
+        for (int i = 0; i < 30; i++) {
+          final pointDate = startDate.add(Duration(days: i));
+          final value = 1200.0 + (i * 20);
+          data.add(PerformanceData(pointDate, value));
+        }
+        break;
+      }
+
+      case PeriodFilter.last3Months: {
+        // Mantém diário (ou ajuste aqui para semanal se quiser)
+        final startDate = DateTime(now.year, now.month - 3, now.day);
+        final totalDays = now.difference(startDate).inDays;
+        for (int i = 0; i <= totalDays; i++) {
+          final pointDate = startDate.add(Duration(days: i));
+          final value = 1200.0 + (i * 20);
+          data.add(PerformanceData(pointDate, value));
+        }
+        break;
+      }
+
+      case PeriodFilter.last1Year: {
+        // **AQUI O AJUSTE**: 12 pontos, um por mês (início de cada mês)
+        final firstMonth = DateTime(now.year, now.month - 11, 1);
+        for (int i = 0; i < 12; i++) {
+          final pointDate = DateTime(firstMonth.year, firstMonth.month + i, 1);
+          final value = 1200.0 + (i * 60); // variação mais espaçada para visão anual
+          data.add(PerformanceData(pointDate, value));
+        }
+        break;
+      }
+    }
+
+    return data;
   }
 
   /// Gera dados de exemplo para os tokens, já processados.
