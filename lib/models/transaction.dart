@@ -1,27 +1,62 @@
-import 'token.dart';
+enum TxDirection { inbound, outbound }
+enum TxStatus { pending, confirmed, failed }
 
 class Transaction {
-  final int id;
-  final int tipo; // 0=entrada, 1=saída, 2=transferência
-  final String rede;
-  final String hashTransacao;
+  final String id;
+  final String hash;
+  final DateTime timestamp;
+  final String tokenSymbol;
+  final String network;
+  final double amount;
   final double fee;
-  final String deOnde;
-  final String paraOnde;
-  final Token token;
-  final DateTime dataHora;
-  final double qtdToken;
+  final TxDirection direction;
+  final TxStatus status;
 
   const Transaction({
     required this.id,
-    required this.tipo,
-    required this.rede,
-    required this.hashTransacao,
+    required this.hash,
+    required this.timestamp,
+    required this.tokenSymbol,
+    required this.network,
+    required this.amount,
     required this.fee,
-    required this.deOnde,
-    required this.paraOnde,
-    required this.token,
-    required this.dataHora,
-    required this.qtdToken,
+    required this.direction,
+    required this.status,
   });
+
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      id: json['id'] as String,
+      hash: json['hash'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      tokenSymbol: json['tokenSymbol'] as String,
+      network: json['network'] as String,
+      amount: (json['amount'] as num).toDouble(),
+      fee: (json['fee'] as num).toDouble(),
+      direction: (json['direction'] as String) == 'inbound'
+          ? TxDirection.inbound
+          : TxDirection.outbound,
+      status: switch (json['status'] as String) {
+        'pending' => TxStatus.pending,
+        'failed' => TxStatus.failed,
+        _ => TxStatus.confirmed,
+      },
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'hash': hash,
+    'timestamp': timestamp.toIso8601String(),
+    'tokenSymbol': tokenSymbol,
+    'network': network,
+    'amount': amount,
+    'fee': fee,
+    'direction': direction == TxDirection.inbound ? 'inbound' : 'outbound',
+    'status': switch (status) {
+      TxStatus.pending => 'pending',
+      TxStatus.failed => 'failed',
+      _ => 'confirmed',
+    },
+  };
 }

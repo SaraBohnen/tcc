@@ -1,11 +1,12 @@
 // lib/utils/sample_data_generator.dart
-// Geração de dados de exemplo (sem dependências de UI)
+// Geração de dados de exemplo (sem dependências de UI) – **ADICIONA transações aqui**
 
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:app_chain_view/models/metrics/performance_point.dart';
 import 'package:app_chain_view/models/metrics/asset_slice.dart';
 import 'package:app_chain_view/models/metrics/token_performance.dart';
+import 'package:app_chain_view/models/transaction.dart';
 
 class SampleDataGenerator {
   static final _random = Random();
@@ -58,10 +59,10 @@ class SampleDataGenerator {
     return [
       AssetSlice(name: 'Ethereum', value: 2000 + _random.nextDouble() * 8000, color: Colors.indigo),
       AssetSlice(name: 'Bitcoin',  value: 2000 + _random.nextDouble() * 7000, color: Colors.orange),
-      AssetSlice(name: 'BSC',      value: 1000 + _random.nextDouble() * 4000, color: Colors.amberAccent.shade700),
+      AssetSlice(name: 'BSC',      value: 1000 + _random.nextDouble() * 4000, color: Colors.amberAccent),
       AssetSlice(name: 'Solana',   value: 500  + _random.nextDouble() * 2000, color: Colors.pinkAccent),
       AssetSlice(name: 'Polygon',  value: 300  + _random.nextDouble() * 1500, color: Colors.deepPurple),
-      AssetSlice(name: 'Avalanche',value: 300  + _random.nextDouble() * 1500, color: Colors.red.shade700),
+      AssetSlice(name: 'Avalanche',value: 300  + _random.nextDouble() * 1500, color: Colors.red),
       AssetSlice(name: 'Others',   value: 200  + _random.nextDouble() * 1500, color: Colors.blueGrey),
     ];
   }
@@ -72,7 +73,11 @@ class SampleDataGenerator {
     final list = List<TokenPerformance>.generate(names.length, (i) {
       final price = 1 + _random.nextDouble() * 70000;
       final change = 5 + _random.nextDouble() * 25; // 5%..30%
-      return TokenPerformance(name: names[i], price: double.parse(price.toStringAsFixed(2)), sevenDayChange: double.parse(change.toStringAsFixed(1)));
+      return TokenPerformance(
+        name: names[i],
+        price: double.parse(price.toStringAsFixed(2)),
+        sevenDayChange: double.parse(change.toStringAsFixed(1)),
+      );
     });
     list.sort((a,b) => b.sevenDayChange.compareTo(a.sevenDayChange));
     return list.take(count).toList();
@@ -84,9 +89,76 @@ class SampleDataGenerator {
     final list = List<TokenPerformance>.generate(names.length, (i) {
       final price = 1 + _random.nextDouble() * 4000;
       final change = -(5 + _random.nextDouble() * 20); // -5%..-25%
-      return TokenPerformance(name: names[i], price: double.parse(price.toStringAsFixed(2)), sevenDayChange: double.parse(change.toStringAsFixed(1)));
+      return TokenPerformance(
+        name: names[i],
+        price: double.parse(price.toStringAsFixed(2)),
+        sevenDayChange: double.parse(change.toStringAsFixed(1)),
+      );
     });
     list.sort((a,b) => a.sevenDayChange.compareTo(b.sevenDayChange));
     return list.take(count).toList();
   }
+
+  // ---------------------------------------------------------------------------
+  // ------------------------- TRANSAÇÕES (NOVO) -------------------------------
+  // ---------------------------------------------------------------------------
+
+  /// Página de transações aleatórias (timestamps em SEGUNDOS, sem microssegundos)
+  static List<Transaction> generateTransactionsPage({
+    required int page,
+    required int pageSize,
+  }) {
+    final baseIndex = page * pageSize;
+    return List<Transaction>.generate(pageSize, (i) {
+      final idx = baseIndex + i;
+      final isIn = _random.nextBool();
+      final statusRoll = _random.nextInt(100);
+      final status = statusRoll < 10
+          ? TxStatus.pending
+          : (statusRoll < 15 ? TxStatus.failed : TxStatus.confirmed);
+
+      final amount = (0.01 + _random.nextDouble() * 5.0);
+      final fee = double.parse((_random.nextDouble() * 0.01).toStringAsFixed(6));
+
+      // Espalha timestamps nos últimos 30 dias
+      final now = DateTime.now();
+      final ts = now.subtract(Duration(
+        days: _random.nextInt(30),
+        hours: _random.nextInt(24),
+        minutes: _random.nextInt(60),
+        seconds: _random.nextInt(60),
+      ));
+      final tsSeconds = DateTime.fromMillisecondsSinceEpoch(
+        (ts.millisecondsSinceEpoch ~/ 1000) * 1000,
+        isUtc: false,
+      );
+
+      return Transaction(
+        id: 'tx_$idx',
+        hash: '0x${_hex32()}${_hex32()}',
+        timestamp: tsSeconds,
+        tokenSymbol: _randomToken(),
+        network: _randomNetwork(),
+        amount: double.parse(amount.toStringAsFixed(6)),
+        fee: fee,
+        direction: isIn ? TxDirection.inbound : TxDirection.outbound,
+        status: status,
+      );
+    });
+  }
+
+  // -------------------------- Helpers privados -------------------------------
+
+  static String _randomToken() {
+    const tokens = ['ETH', 'USDC', 'BTC', 'MATIC', 'SOL', 'ARB', 'OP', 'DAI'];
+    return tokens[_random.nextInt(tokens.length)];
+  }
+
+  static String _randomNetwork() {
+    const nets = ['Ethereum', 'Polygon', 'Arbitrum', 'Optimism', 'Solana'];
+    return nets[_random.nextInt(nets.length)];
+  }
+
+  static String _hex32() =>
+      (_random.nextInt(1 << 32)).toRadixString(16).padLeft(8, '0');
 }
