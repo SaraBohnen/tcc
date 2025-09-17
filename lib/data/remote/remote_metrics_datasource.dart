@@ -14,7 +14,6 @@ class RemoteMetricsDataSource {
       networkSummary: null,
       topPerformers: null,
       worstPerformers: null,
-
     );
   }
 }

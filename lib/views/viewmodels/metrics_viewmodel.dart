@@ -27,48 +27,59 @@ class MetricsViewModel extends ChangeNotifier {
 
   // Série filtrada para o gráfico de linha
   List<PerformanceData> get performanceData {
-    final series = _snapshot?.portfolioPerformance ?? const <PerformancePoint>[];
+    final series =
+        _snapshot?.portfolioPerformance ?? const <PerformancePoint>[];
     if (series.isEmpty) return const [];
     final now = DateTime.now();
     DateTime cutoff;
     switch (_selectedFilter) {
       case PeriodFilter.last7Days:
-        cutoff = now.subtract(const Duration(days: 6)); break;
+        cutoff = now.subtract(const Duration(days: 6));
+        break;
       case PeriodFilter.last1Month:
-        cutoff = now.subtract(const Duration(days: 30)); break;
+        cutoff = now.subtract(const Duration(days: 30));
+        break;
       case PeriodFilter.last3Months:
-        cutoff = now.subtract(const Duration(days: 90)); break;
+        cutoff = now.subtract(const Duration(days: 90));
+        break;
       case PeriodFilter.last1Year:
-        cutoff = now.subtract(const Duration(days: 365)); break;
+        cutoff = now.subtract(const Duration(days: 365));
+        break;
     }
     final filtered = series.where((p) => !p.date.isBefore(cutoff)).toList();
     return filtered.map((p) => PerformanceData(p.date, p.value)).toList();
   }
 
   // Dados para os gráficos de pizza
-  List<AssetSlice> get tokenData => _snapshot?.tokenSummary ?? const <AssetSlice>[];
-  List<AssetSlice> get networkData => _snapshot?.networkSummary ?? const <AssetSlice>[];
+  List<AssetSlice> get tokenData =>
+      _snapshot?.tokenSummary ?? const <AssetSlice>[];
+  List<AssetSlice> get networkData =>
+      _snapshot?.networkSummary ?? const <AssetSlice>[];
 
   // Adaptadores para a tabela Top/Worst (converte para TokenPerformanceData do componente)
   List<TokenPerformanceData> get topPerformers {
     final list = _snapshot?.topPerformers ?? const <TokenPerformance>[];
     return list
-        .map((e) => TokenPerformanceData(
-      name: e.name,
-      price: e.price,
-      sevenDayChange: e.sevenDayChange,
-    ))
+        .map(
+          (e) => TokenPerformanceData(
+            name: e.name,
+            price: e.price,
+            sevenDayChange: e.sevenDayChange,
+          ),
+        )
         .toList();
   }
 
   List<TokenPerformanceData> get worstPerformers {
     final list = _snapshot?.worstPerformers ?? const <TokenPerformance>[];
     return list
-        .map((e) => TokenPerformanceData(
-      name: e.name,
-      price: e.price,
-      sevenDayChange: e.sevenDayChange,
-    ))
+        .map(
+          (e) => TokenPerformanceData(
+            name: e.name,
+            price: e.price,
+            sevenDayChange: e.sevenDayChange,
+          ),
+        )
         .toList();
   }
 

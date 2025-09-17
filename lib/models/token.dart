@@ -1,30 +1,49 @@
+import 'dart:convert';
+
 class Token {
-  final String contrato;
-  final String nome;
-
-  /// Ícone: deixar como URL por enquanto; se preferir bytes, troque para Uint8List.
-  final String? iconeUrl;
-
-  final double preco;
-  final double mudancaPreco1D;
-  final double mudancaPreco7D;
-  final double mudancaPreco1M;
-  final double mudancaPreco1A;
-  final double mudancaPrecoTotal;
-  final String blockchain;
-  final double qtdToken; // quantidade que o usuário possui (na carteira)
+  final String symbol;
+  final double quantity;
+  final double price; // preço unitário em USD
+  final String iconPath;
 
   const Token({
-    required this.contrato,
-    required this.nome,
-    this.iconeUrl,
-    required this.preco,
-    required this.mudancaPreco1D,
-    required this.mudancaPreco7D,
-    required this.mudancaPreco1M,
-    required this.mudancaPreco1A,
-    required this.mudancaPrecoTotal,
-    required this.blockchain,
-    required this.qtdToken,
+    required this.symbol,
+    required this.quantity,
+    required this.price,
+    required this.iconPath,
   });
+
+  double get usdValue => quantity * price;
+
+  Token copyWith({
+    String? symbol,
+    double? quantity,
+    double? price,
+    String? iconPath,
+  }) {
+    return Token(
+      symbol: symbol ?? this.symbol,
+      quantity: quantity ?? this.quantity,
+      price: price ?? this.price,
+      iconPath: iconPath ?? this.iconPath,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'symbol': symbol,
+    'quantity': quantity,
+    'price': price,
+    'iconPath': iconPath,
+  };
+
+  factory Token.fromMap(Map<String, dynamic> map) => Token(
+    symbol: map['symbol'] as String,
+    quantity: (map['quantity'] as num).toDouble(),
+    price: (map['price'] as num).toDouble(),
+    iconPath: map['iconPath'] as String,
+  );
+
+  String toJson() => jsonEncode(toMap());
+  factory Token.fromJson(String source) =>
+      Token.fromMap(jsonDecode(source) as Map<String, dynamic>);
 }

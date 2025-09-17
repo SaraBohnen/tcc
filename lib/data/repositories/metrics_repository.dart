@@ -11,15 +11,14 @@ class MetricsRepository {
   MetricsRepository({
     required LocalMetricsDataSource local,
     required RemoteMetricsDataSource remote,
-  })  : _local = local,
-        _remote = remote;
+  }) : _local = local,
+       _remote = remote;
 
   Future<Metrics?> getLocalSnapshot() => _local.read();
 
   Future<Metrics> refreshFromRemote() async {
-    final local = await _local.read();
+    await _local.read();
 
-    // Remoto mock (sem séries/sumários)
     final remote = await _remote.fetchMetrics();
 
     final data = remote.copyWith(
@@ -30,6 +29,7 @@ class MetricsRepository {
       topPerformers: SampleDataGenerator.generateTopPerformers(),
       worstPerformers: SampleDataGenerator.generateWorstPerformers(),
       totalFees: SampleDataGenerator.generateTotalFees(),
+      updatedAt: DateTime.now(), // << importante para exibir “Atualizado em”
     );
 
     await _local.save(data);

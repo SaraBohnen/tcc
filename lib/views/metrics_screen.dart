@@ -35,7 +35,8 @@ class MetricsTab extends StatelessWidget {
       child: RefreshIndicator(
         onRefresh: vm.refresh, // força consulta no "remoto"
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(), // necessário p/ pull-to-refresh
+          physics:
+              const AlwaysScrollableScrollPhysics(), // necessário p/ pull-to-refresh
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -101,7 +102,10 @@ class MetricsTab extends StatelessWidget {
               const SizedBox(height: 24),
 
               // --- TOTAL DE TAXAS ---
-              TotalBalanceCard(totalBalance: vm.totalFees, title: "Total de Taxas"),
+              TotalBalanceCard(
+                totalBalance: vm.totalFees,
+                title: "Total de Taxas",
+              ),
               const SizedBox(height: 24),
 
               //--- FRASE E ÍCONE ---

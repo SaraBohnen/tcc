@@ -56,8 +56,9 @@ class Metrics {
     'totalBalance': totalBalance,
     'totalFees': totalFees,
     'updatedAt': updatedAt.toIso8601String(),
-    'portfolioPerformance':
-    portfolioPerformance?.map((e) => e.toJson()).toList(),
+    'portfolioPerformance': portfolioPerformance
+        ?.map((e) => e.toJson())
+        .toList(),
     'tokenSummary': tokenSummary?.map((e) => e.toJson()).toList(),
     'networkSummary': networkSummary?.map((e) => e.toJson()).toList(),
     'topPerformers': topPerformers?.map((e) => e.toJson()).toList(),

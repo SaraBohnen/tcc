@@ -15,7 +15,10 @@ class LocalTransactionsDataSource {
     return _cache.sublist(start, end > _cache.length ? _cache.length : end);
   }
 
-  Future<void> upsertAll(List<Transaction> items, {bool replace = false}) async {
+  Future<void> upsertAll(
+    List<Transaction> items, {
+    bool replace = false,
+  }) async {
     if (replace) {
       _cache
         ..clear()
