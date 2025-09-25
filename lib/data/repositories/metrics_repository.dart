@@ -17,8 +17,6 @@ class MetricsRepository {
   Future<Metrics?> getLocalSnapshot() => _local.read();
 
   Future<Metrics> refreshFromRemote() async {
-    await _local.read();
-
     final remote = await _remote.fetchMetrics();
 
     final data = remote.copyWith(
