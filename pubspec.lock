@@ -93,10 +93,10 @@ packages:
     dependency: "direct main"
     description:
       name: fl_chart
-      sha256: d3f82f4a38e33ba23d05a08ff304d7d8b22d2a59a5503f20bd802966e915db89
+      sha256: "7ca9a40f4eb85949190e54087be8b4d6ac09dc4c54238d782a34cf1f7c011de9"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -110,6 +110,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: "306f0596590e077338312f38837f595c04f28d6cdeeac392d3d74df2f0003687"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.32"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -196,10 +204,10 @@ packages:
     dependency: transitive
     description:
       name: leak_tracker
-      sha256: "8dcda04c3fc16c14f48a7bb586d4be1f0d1572731b6d81d51772ef47c02081e0"
+      sha256: "33e2e26bdd85a0112ec15400c8cbffea70d0f9c3407491f672a2fad47915e2de"
       url: "https://pub.dev"
     source: hosted
-    version: "11.0.1"
+    version: "11.0.2"
   leak_tracker_flutter_testing:
     dependency: transitive
     description:
@@ -224,6 +232,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  local_auth:
+    dependency: "direct main"
+    description:
+      name: local_auth
+      sha256: a4f1bf57f0236a4aeb5e8f0ec180e197f4b112a3456baa6c1e73b546630b0422
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
+  local_auth_android:
+    dependency: transitive
+    description:
+      name: local_auth_android
+      sha256: d836715ed95b16b2de3a8c47a88ba5e607976bb1e27c9446d193152ea1429fae
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  local_auth_darwin:
+    dependency: transitive
+    description:
+      name: local_auth_darwin
+      sha256: "15d9db4ad4d58a11d7269e55d46ff8d49ed5e856226c8a5a91280f0d7c37b3a6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  local_auth_platform_interface:
+    dependency: transitive
+    description:
+      name: local_auth_platform_interface
+      sha256: f98b8e388588583d3f781f6806e4f4c9f9e189d898d27f0c249b93a1973dd122
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
+  local_auth_windows:
+    dependency: transitive
+    description:
+      name: local_auth_windows
+      sha256: d95535a73eddf57ce5930d5e78a0fa4f294c31981fdeeee83325b797302be454
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   matcher:
     dependency: transitive
     description:
@@ -348,10 +396,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: a2608114b1ffdcbc9c120eb71a0e207c71da56202852d4aab8a5e30a82269e74
+      sha256: bd14436108211b0d4ee5038689a56d4ae3620fd72fd6036e113bf1345bc74d9e
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.12"
+    version: "2.4.13"
   shared_preferences_foundation:
     dependency: transitive
     description:
@@ -526,5 +574,5 @@ packages:
     source: hosted
     version: "1.1.0"
 sdks:
-  dart: ">=3.9.0 <4.0.0"
-  flutter: ">=3.29.0"
+  dart: ">=3.9.2 <4.0.0"
+  flutter: ">=3.35.0"

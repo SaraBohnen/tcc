@@ -83,7 +83,7 @@ class MetricsViewModel extends ChangeNotifier {
         .toList();
   }
 
-  // Ciclo de vida
+  /// carrega os dados
   Future<void> loadAll() async {
     final local = await _repo.getLocalSnapshot();
     if (local != null) {
@@ -93,6 +93,7 @@ class MetricsViewModel extends ChangeNotifier {
     await refresh();
   }
 
+  /// atualiza com dados mais recentes do repositório remoto
   Future<void> refresh() async {
     if (_isRefreshing) return;
     _isRefreshing = true;

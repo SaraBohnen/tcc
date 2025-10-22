@@ -21,7 +21,6 @@ import 'package:app_chain_view/data/local/local_metrics_datasource.dart';
 import 'package:app_chain_view/data/remote/remote_metrics_datasource.dart';
 import 'package:app_chain_view/data/repositories/metrics_repository.dart';
 
-/// Conteúdo da aba "Métricas"
 class MetricsTab extends StatelessWidget {
   const MetricsTab({Key? key}) : super(key: key);
 
@@ -29,14 +28,15 @@ class MetricsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<MetricsViewModel>();
 
-    // RefreshIndicator para puxar-para-atualizar
+    /// RefreshIndicator: puxar para atualizar
     return SafeArea(
       top: false,
       child: RefreshIndicator(
-        onRefresh: vm.refresh, // força consulta no "remoto"
+        onRefresh: vm.refresh,
+
+        /// força consulta no repositório remoto
         child: SingleChildScrollView(
-          physics:
-              const AlwaysScrollableScrollPhysics(), // necessário p/ pull-to-refresh
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -52,11 +52,11 @@ class MetricsTab extends StatelessWidget {
                   ),
                 ),
 
-              // --- SALDO TOTAL ---
+              /// --- SALDO TOTAL ---
               TotalBalanceCard(totalBalance: vm.totalBalance, title: "Total"),
               const SizedBox(height: 24),
 
-              // --- FILTRO DE PERÍODO ---
+              /// --- FILTRO DE PERÍODO ---
               PeriodFilterDropdown(
                 selectedFilter: vm.selectedFilter,
                 onChanged: (newFilter) {

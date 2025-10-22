@@ -9,17 +9,17 @@ import 'package:app_chain_view/models/transaction.dart';
 class SampleDataGenerator {
   static final _random = Random();
 
-  /// Gera um saldo total aleatório
+  /// irá gerar um saldo total
   static double generateTotalBalance() {
     return 1000 + _random.nextDouble() * 9000;
   }
 
-  /// Gera taxas aleatórias
+  /// ira gerar um valor total de taxas
   static double generateTotalFees() {
     return 0.01 + _random.nextDouble() * 1.99;
   }
 
-  /// Série diária de 1 ano (365 dias) – random walk
+  /// série diária de 1 ano
   static List<PerformancePoint> generateOneYearDailySeries({
     double startBase = 1200.0,
     double dailyVolatility = 0.02,
@@ -170,10 +170,6 @@ class SampleDataGenerator {
     list.sort((a, b) => a.sevenDayChange.compareTo(b.sevenDayChange));
     return list.take(count).toList();
   }
-
-  // ---------------------------------------------------------------------------
-  // ------------------------- TRANSAÇÕES (NOVO) -------------------------------
-  // ---------------------------------------------------------------------------
 
   /// Página de transações aleatórias (timestamps em SEGUNDOS, sem microssegundos)
   static List<Transaction> generateTransactionsPage({

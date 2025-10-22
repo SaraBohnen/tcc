@@ -1,4 +1,6 @@
 // lib/views/splash_screen.dart
+// Navega para a tela de Login após a animação (inalterado, apenas mantém a rota).
+import 'package:app_chain_view/views/login_screen.dart';
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 
@@ -23,6 +25,15 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 2000),
     );
     _fade = CurvedAnimation(parent: _ac, curve: Curves.easeIn);
+
+    _ac.addStatusListener((status) async {
+      if (status == AnimationStatus.completed && mounted) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+      }
+    });
+
     _ac.forward();
   }
 
