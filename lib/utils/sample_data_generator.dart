@@ -1,3 +1,7 @@
+// lib/utils/sample_data_generator.dart
+// Adiciona 2 carteiras fixas e validação por endereço.
+// Comentários em pt-BR.
+
 import 'dart:math';
 import 'package:app_chain_view/models/token.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +12,27 @@ import 'package:app_chain_view/models/transaction.dart';
 
 class SampleDataGenerator {
   static final _random = Random();
+
+  // 🔹 Carteiras de amostra fixas (use estes endereços nos testes)
+  //  - 1 endereço EVM
+  //  - 1 endereço Bech32
+  static const List<String> _knownWallets = [
+    '0x9fB4A0f4bF3C1c4E2cA1d2B3a4E5F6A7b8C9D0E1', // EVM (42 chars com "0x")
+    'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', // Bech32 (exemplo)
+  ];
+
+  /// Verifica se o endereço informado existe no conjunto de carteiras de amostra
+  static bool isKnownWallet(String address) {
+    final v = address.trim();
+    if (v.isEmpty) return false;
+    return _knownWallets.any((w) => w.toLowerCase() == v.toLowerCase());
+  }
+
+  /// Retorna a lista imutável das carteiras conhecidas (útil para debug/UI)
+  static List<String> knownWallets() => List.unmodifiable(_knownWallets);
+
+  /// Semente determinística por carteira (opcional, para dados consistentes)
+  static int seedForWallet(String address) => address.toLowerCase().hashCode;
 
   /// irá gerar um saldo total
   static double generateTotalBalance() {
@@ -224,23 +249,11 @@ class SampleDataGenerator {
     required int page,
     required int pageSize,
   }) {
-    // RNG determinístico por página para estabilidade visual
     final rng = Random(1337 + page);
 
     const universe = <String>[
-      'BTC',
-      'ETH',
-      'USDT',
-      'USDC',
-      'BNB',
-      'SOL',
-      'XRP',
-      'ADA',
-      'DOGE',
-      'AVAX',
-      'MATIC',
-      'DOT',
-      'LINK',
+      'BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA',
+      'DOGE', 'AVAX', 'MATIC', 'DOT', 'LINK',
     ];
 
     const iconBySymbol = <String, String>{
@@ -263,33 +276,20 @@ class SampleDataGenerator {
 
     double priceHint(String s) {
       switch (s) {
-        case 'BTC':
-          return 65000;
-        case 'ETH':
-          return 3200;
-        case 'BNB':
-          return 570;
-        case 'SOL':
-          return 160;
-        case 'XRP':
-          return 0.6;
-        case 'ADA':
-          return 0.45;
-        case 'DOGE':
-          return 0.14;
-        case 'AVAX':
-          return 30;
-        case 'MATIC':
-          return 0.8;
-        case 'DOT':
-          return 6.2;
-        case 'LINK':
-          return 13.0;
+        case 'BTC': return 65000;
+        case 'ETH': return 3200;
+        case 'BNB': return 570;
+        case 'SOL': return 160;
+        case 'XRP': return 0.6;
+        case 'ADA': return 0.45;
+        case 'DOGE': return 0.14;
+        case 'AVAX': return 30;
+        case 'MATIC': return 0.8;
+        case 'DOT': return 6.2;
+        case 'LINK': return 13.0;
         case 'USDT':
-        case 'USDC':
-          return 1.0;
-        default:
-          return 1.0;
+        case 'USDC': return 1.0;
+        default: return 1.0;
       }
     }
 
@@ -299,10 +299,8 @@ class SampleDataGenerator {
     final List<Token> out = List.generate(pageSize, (i) {
       final symbol = universe[(page * pageSize + i) % universe.length];
 
-      // Quantidade aleatória coerente para diferentes faixas
       final qty = randomInRange(0.001, 2500.0);
       final base = priceHint(symbol);
-      // Variação +/- 8%
       final price = base * (0.92 + rng.nextDouble() * 0.16);
 
       return Token(
@@ -313,10 +311,10 @@ class SampleDataGenerator {
       );
     });
 
-    // Ordena por valor USD desc para consistência com a UI
     out.sort((a, b) => b.usdValue.compareTo(a.usdValue));
     return out;
   }
+
   // -------------------------- Helpers privados -------------------------------
 
   static String _randomToken() {

@@ -4,12 +4,8 @@ import 'package:app_chain_view/models/metrics/token_performance.dart';
 import 'metrics/performance_point.dart';
 import 'metrics/asset_slice.dart';
 
-/// App-level snapshot de métricas
-/// Obs.:
-/// - `portfolioPerformance`: série temporal do desempenho da carteira.
-/// - `tokenSummary`: fatias para o gráfico "Resumo de tokens".
-/// - `networkSummary`: fatias para o gráfico "Resumo de redes".
 class Metrics {
+  final String wallet;
   final double totalBalance;
   final double totalFees;
   final DateTime updatedAt;
@@ -20,6 +16,7 @@ class Metrics {
   final List<TokenPerformance>? worstPerformers;
 
   Metrics({
+    required this.wallet,
     required this.totalBalance,
     required this.totalFees,
     required this.updatedAt,
@@ -31,6 +28,7 @@ class Metrics {
   });
 
   Metrics copyWith({
+    String? wallet,
     double? totalBalance,
     double? totalFees,
     DateTime? updatedAt,
@@ -41,6 +39,7 @@ class Metrics {
     List<TokenPerformance>? worstPerformers,
   }) {
     return Metrics(
+      wallet: wallet ?? this.wallet,
       totalBalance: totalBalance ?? this.totalBalance,
       totalFees: totalFees ?? this.totalFees,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -53,6 +52,7 @@ class Metrics {
   }
 
   Map<String, dynamic> toJson() => {
+    'wallet': wallet,
     'totalBalance': totalBalance,
     'totalFees': totalFees,
     'updatedAt': updatedAt.toIso8601String(),
@@ -66,6 +66,7 @@ class Metrics {
   };
 
   factory Metrics.fromJson(Map<String, dynamic> json) => Metrics(
+    wallet: (json['wallet']).toString(),
     totalBalance: (json['totalBalance'] as num).toDouble(),
     totalFees: (json['totalFees'] as num).toDouble(),
     updatedAt: DateTime.parse(json['updatedAt'] as String),

@@ -1,9 +1,10 @@
-// lib/main.dart
+
 import 'package:app_chain_view/views/login_screen.dart';
+import 'package:app_chain_view/views/metrics_charts_manager_screen.dart' hide MetricsScreen;
 import 'package:app_chain_view/views/viewmodels/login_auth_viewmodel.dart';
+import 'package:app_chain_view/views/wallet_setup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:app_chain_view/views/onboarding/onboarding_screen.dart';
 import 'package:app_chain_view/views/start/start_gate.dart';
 import 'views/splash_screen.dart';
@@ -63,13 +64,18 @@ class AppChainView extends StatelessWidget {
             ),
           ),
         ),
-        initialRoute: StartGate.routeName,
+
+        // ✅ Inicia sempre pela tela de Login
+        initialRoute: LoginScreen.routeName,
+
         routes: {
           StartGate.routeName: (_) => const StartGate(),
           SplashScreen.routeName: (_) => const SplashScreen(),
           OnboardingScreen.routeName: (_) => const OnboardingScreen(),
           MetricsScreen.routeName: (_) => const MetricsScreen(),
-          LoginScreen.routeName: (_) => const LoginScreen(), // agora simples
+          LoginScreen.routeName: (_) => const LoginScreen(),
+          WalletSetupScreen.routeName: (_) => const WalletSetupScreen(),
+          MetricsChartsManagerScreen.routeName: (_) => const MetricsChartsManagerScreen(),
         },
       ),
     );

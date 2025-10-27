@@ -1,4 +1,3 @@
-// lib/data/repositories/metrics_repository.dart
 import 'package:app_chain_view/data/local/local_metrics_datasource.dart';
 import 'package:app_chain_view/data/remote/remote_metrics_datasource.dart';
 import 'package:app_chain_view/models/metrics.dart';
@@ -11,13 +10,14 @@ class MetricsRepository {
   MetricsRepository({
     required LocalMetricsDataSource local,
     required RemoteMetricsDataSource remote,
-  }) : _local = local,
-       _remote = remote;
+  })  : _local = local,
+        _remote = remote;
 
-  Future<Metrics?> getLocalSnapshot() => _local.read();
+  Future<Metrics?> getLocalSnapshot({String? wallet}) =>
+      _local.read(wallet: wallet);
 
-  Future<Metrics> refreshFromRemote() async {
-    final remote = await _remote.fetchMetrics();
+  Future<Metrics> refreshFromRemote({String? wallet}) async {
+    final remote = await _remote.fetchMetrics(wallet: wallet);
 
     final data = remote.copyWith(
       totalBalance: SampleDataGenerator.generateTotalBalance(),
@@ -27,12 +27,12 @@ class MetricsRepository {
       topPerformers: SampleDataGenerator.generateTopPerformers(),
       worstPerformers: SampleDataGenerator.generateWorstPerformers(),
       totalFees: SampleDataGenerator.generateTotalFees(),
-      updatedAt: DateTime.now(), // << importante para exibir “Atualizado em”
+      updatedAt: DateTime.now(), // usado para “Atualizado em”
     );
 
-    await _local.save(data);
+    await _local.save(data, wallet: wallet);
     return data;
   }
 
-  Future<void> clear() => _local.clear();
+  Future<void> clear({String? wallet}) => _local.clear(wallet: wallet);
 }

@@ -1,5 +1,5 @@
 // lib/views/start/login_screen.dart
-// UI: "Pular" abre diálogo. Se não houver biometria disponível, só mostra PIN.
+// UI: "Pular" abre diálogo. "Fazer login" e "Cadastrar" mostram Toast.
 // Comentários em pt-BR.
 import 'package:app_chain_view/views/viewmodels/login_auth_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -14,22 +14,19 @@ class LoginScreen extends StatelessWidget {
   Future<void> _askAuthPreference(BuildContext context) async {
     final vm = context.read<LoginAuthViewModel>();
 
-    // Se ainda não inicializou, faz init
     if (!vm.isSupported && !vm.isAuthenticating) {
       await vm.init();
     }
 
-    // Sem biometria disponível: força caminho do PIN
     if (!vm.hasBiometrics) {
       final ok = await vm.authenticateWithDeviceCredential(
-        reason: 'Use your device PIN to continue',
+        reason: 'Use seu PIN para continuar',
       );
       if (!context.mounted) return;
       _handleResult(context, ok, vm);
       return;
     }
 
-    // Com biometria disponível: oferece escolha
     final choice = await showDialog<_AuthChoice>(
       context: context,
       builder: (context) {
@@ -64,16 +61,16 @@ class LoginScreen extends StatelessWidget {
     switch (choice) {
       case _AuthChoice.biometrics:
         ok = await vm.authenticateWithBiometrics(
-          reason: 'Authenticate with biometrics to continue',
+          reason: 'Autentique-se para continuar',
         );
         break;
       case _AuthChoice.pin:
         ok = await vm.authenticateWithDeviceCredential(
-          reason: 'Use your device PIN to continue',
+          reason: 'Use seu PIN para continuar',
         );
         break;
       case _AuthChoice.none:
-        ok = true; // segue sem ativar autenticação
+        ok = true;
         break;
     }
 
@@ -81,22 +78,32 @@ class LoginScreen extends StatelessWidget {
     _handleResult(context, ok, vm);
   }
 
-  // Trata o resultado: navega se ok; mostra erro se falhar
   void _handleResult(BuildContext context, bool ok, LoginAuthViewModel vm) {
     if (ok) {
       Navigator.of(context).pushReplacementNamed(StartGate.routeName);
     } else {
-      final err =
-          vm.lastError ??
-          // dica comum: ausência de PIN cadastrado no dispositivo
-          'Autenticação falhou. Verifique se há PIN/biometria configurados nas configurações do dispositivo.';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+      final err = vm.lastError ??
+          'Autenticação falhou. Verifique se há PIN/biometria configurados.';
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(err)));
     }
+  }
+
+  // 🔹 Mostra Toast simples no rodapé
+  void _showDevToast(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Funcionalidade em desenvolvimento.\nUse "Pular" para continuar.',
+          textAlign: TextAlign.center,
+        ),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // dispara init do VM após o primeiro frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vm = context.read<LoginAuthViewModel>();
       vm.init();
@@ -123,7 +130,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const Spacer(flex: 3),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () => _showDevToast(context),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -138,7 +145,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () => _showDevToast(context),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(

@@ -1,4 +1,6 @@
 // lib/components/asset_pie_chart.dart
+// PieChart com suporte a toque (highlight) e callback de tap para navegação.
+// Comentários em pt-BR.
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +8,13 @@ import 'package:app_chain_view/models/metrics/asset_slice.dart';
 
 class AssetPieChart extends StatefulWidget {
   final List<AssetSlice> data;
+  final VoidCallback? onTap; // 🔹 callback opcional para navegação (ex.: ir para Carteira)
 
-  const AssetPieChart({Key? key, required this.data}) : super(key: key);
+  const AssetPieChart({
+    Key? key,
+    required this.data,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   State<AssetPieChart> createState() => _AssetPieChartState();
@@ -41,18 +48,26 @@ class _AssetPieChartState extends State<AssetPieChart> {
               child: PieChart(
                 PieChartData(
                   pieTouchData: PieTouchData(
+                    // 🔹 O PieChart consome gestos; trate o toque aqui
                     touchCallback: (event, pieTouchResponse) {
+                      // Atualiza destaque ao tocar/arrastar
                       setState(() {
                         if (!event.isInterestedForInteractions ||
                             pieTouchResponse == null ||
                             pieTouchResponse.touchedSection == null) {
                           touchedIndex = -1;
-                          return;
+                        } else {
+                          touchedIndex = pieTouchResponse
+                              .touchedSection!.touchedSectionIndex;
                         }
-                        touchedIndex = pieTouchResponse
-                            .touchedSection!.touchedSectionIndex;
                       });
+
+                      // 🔹 Dispara navegação apenas quando o dedo "solta" (tap up)
+                      if (event is FlTapUpEvent) {
+                        widget.onTap?.call();
+                      }
                     },
+                    enabled: true,
                   ),
                   borderData: FlBorderData(show: false),
                   sectionsSpace: 2,
@@ -100,10 +115,12 @@ class _AssetPieChartState extends State<AssetPieChart> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: widget.data
-          .map((e) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Indicator(color: e.color, text: e.name),
-      ))
+          .map(
+            (e) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Indicator(color: e.color, text: e.name),
+        ),
+      )
           .toList(),
     );
   }

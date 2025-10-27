@@ -1,11 +1,12 @@
-// lib/data/remote/remote_metrics_datasource.dart
 import '../../models/metrics.dart';
 
 class RemoteMetricsDataSource {
-  Future<Metrics> fetchMetrics() async {
+  Future<Metrics> fetchMetrics({String? wallet}) async {
+    // Simula latência
     await Future.delayed(const Duration(milliseconds: 600));
 
     return Metrics(
+      wallet: wallet?.trim() ?? "",
       totalBalance: 0,
       totalFees: 0,
       updatedAt: DateTime.now(),

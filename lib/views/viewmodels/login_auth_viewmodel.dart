@@ -1,7 +1,7 @@
 // lib/viewmodels/login_auth_viewmodel.dart
 // ViewModel para autenticação local (biometria / PIN)
-// Regra: se não houver biometria disponível, permitir somente PIN.
 // Compatível com local_auth: ^3.0.0
+
 import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -21,23 +21,21 @@ class LoginAuthViewModel extends ChangeNotifier {
   bool get authenticated => _authenticated;
   String? get lastError => _lastError;
 
-  // Há algum tipo de biometria disponível e cadastrada no dispositivo?
   bool get hasBiometrics =>
       _canCheckBiometrics && _availableBiometrics.isNotEmpty;
 
-  // Inicializa verificando suporte e recursos disponíveis
   Future<void> init() async {
     try {
       _isSupported = await _auth.isDeviceSupported();
       _canCheckBiometrics = await _auth.canCheckBiometrics;
       _availableBiometrics = await _auth.getAvailableBiometrics();
+      _lastError = null;
     } catch (e) {
-      _lastError = e.toString();
+      _lastError = _mapError(e);
     }
     notifyListeners();
   }
 
-  // Autenticação usando biometria apenas
   Future<bool> authenticateWithBiometrics({
     String reason = 'Authenticate to continue',
   }) async {
@@ -45,19 +43,19 @@ class LoginAuthViewModel extends ChangeNotifier {
     try {
       final ok = await _auth.authenticate(
         localizedReason: reason,
-        biometricOnly: true, // apenas biometria
+        biometricOnly: true,
       );
       _authenticated = ok;
+      _lastError = ok ? null : 'Biometria não reconhecida. Tente novamente.';
       return ok;
     } catch (e) {
-      _lastError = e.toString();
+      _lastError = _mapError(e);
       return false;
     } finally {
       _setAuthenticating(false);
     }
   }
 
-  // Autenticação permitindo credencial do dispositivo (PIN/padrão/senha)
   Future<bool> authenticateWithDeviceCredential({
     String reason = 'Authenticate to continue',
   }) async {
@@ -65,12 +63,15 @@ class LoginAuthViewModel extends ChangeNotifier {
     try {
       final ok = await _auth.authenticate(
         localizedReason: reason,
-        biometricOnly: false, // permite PIN/Passcode
+        biometricOnly: false,
       );
       _authenticated = ok;
+      _lastError = ok
+          ? null
+          : 'Não foi possível autenticar. Verifique o PIN/senha e tente novamente.';
       return ok;
     } catch (e) {
-      _lastError = e.toString();
+      _lastError = _mapError(e);
       return false;
     } finally {
       _setAuthenticating(false);
@@ -86,5 +87,42 @@ class LoginAuthViewModel extends ChangeNotifier {
   void _setAuthenticating(bool v) {
     _isAuthenticating = v;
     notifyListeners();
+  }
+
+  String _mapError(Object e) {
+    if (e is LocalAuthException) {
+      final code = e.code ?? '';
+      if (code == 'noCredentialsSet') {
+        return 'O dispositivo não possui credenciais de bloqueio configuradas. Defina um PIN/senha nas configurações e tente novamente.';
+      }
+      if (code == 'notEnrolled') {
+        return 'Nenhuma biometria cadastrada. Cadastre sua biometria nas configurações do dispositivo.';
+      }
+      if (code == 'notAvailable') {
+        return 'Autenticação local indisponível neste dispositivo.';
+      }
+      if (code == 'lockedOut' || code == 'permanentlyLockedOut') {
+        return 'Muitas tentativas falhas. Tente novamente mais tarde.';
+      }
+      // 🔧 Ajuste: algumas versões não expõem 'message'
+      final fallback = e.toString();
+      return fallback.isNotEmpty ? fallback : 'Falha na autenticação local.';
+    }
+
+    final s = e.toString();
+    if (s.contains('noCredentialsSet')) {
+      return 'O dispositivo não possui credenciais de bloqueio configuradas. Defina um PIN/senha nas configurações e tente novamente.';
+    }
+    if (s.contains('notEnrolled')) {
+      return 'Nenhuma biometria cadastrada. Cadastre sua biometria nas configurações do dispositivo.';
+    }
+    if (s.contains('notAvailable')) {
+      return 'Autenticação local indisponível neste dispositivo.';
+    }
+    if (s.contains('lockedOut')) {
+      return 'Muitas tentativas falhas. Tente novamente mais tarde.';
+    }
+
+    return 'Autenticação falhou. Verifique as credenciais do dispositivo.';
   }
 }
